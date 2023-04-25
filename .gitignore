@@ -2,4 +2,4 @@
 /.venv
 
 # poetry
-.toml
+*.toml
