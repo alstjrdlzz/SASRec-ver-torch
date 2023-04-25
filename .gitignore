@@ -1,2 +1,5 @@
 # environment
 /.venv
+
+# poetry
+.toml
