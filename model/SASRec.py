@@ -23,6 +23,6 @@ class SelfAttentionLayer(nn.Module):
             energy = energy.masked_fill(mask==0, -1e10)
         
         attention = torch.softmax(energy, dim=-1)
-        
-        x = torch.matmul(attention, V)
+
+        x = torch.matmul(attention, V) # item embedding after self-attention layer S
         return x, attention
