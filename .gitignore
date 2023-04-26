@@ -1,2 +1,6 @@
 # environment
 /.venv
+
+# poetry
+*.toml
+*.lock
