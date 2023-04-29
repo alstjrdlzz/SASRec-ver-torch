@@ -28,7 +28,7 @@ class SelfAttentionLayer(nn.Module):
         attention = torch.softmax(energy, dim=-1)
 
         x = torch.matmul(self.dropout(attention), V)
-        return x, attention
+        return query + x, attention
     
 
     class PointwiseFeedforwardNetwork(nn.Module):
