@@ -35,14 +35,13 @@ class SelfAttentionLayer(nn.Module):
         def __init__(self, hidden_dim, dropout):
             super().__init__()
             self.conv1 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
-            self.relu = nn.ReLU()
-            self.dropout1 = nn.Dropout(dropout)
             self.conv2 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
-            self.dropout2 = nn.Dropout(dropout)
+            self.relu = nn.ReLU()
+            self.dropout = nn.Dropout(dropout)
             
         def forward(self, x):
-            x = self.dropout1(self.relu(self.conv1(x)))
-            x = self.dropout2(self.conv2(x))
+            x = self.dropout(self.relu(self.conv1(x)))
+            x = self.dropout(self.conv2(x))
             return x
         
     
