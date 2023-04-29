@@ -44,3 +44,23 @@ class SelfAttentionLayer(nn.Module):
             x_ = self.dropout1(self.relu(self.conv1(x)))
             x_ = self.dropout2(self.conv2(x))
             return x + x_
+        
+    
+    class SelfAttentionBlock(nn.Module):
+        def __init__(self, hidden_dim, dropout, device):
+            super().__init__()
+            self.sa_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
+            self.ffn_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
+            self.self_attention_layer = SelfAttentionLayer(hidden_dim, dropout, device)
+            self.pointwise_feedforward_network = PointwiseFeedforwardNetwork(hidden_dim, dropout)
+            self.dropout = nn.Dropout(dropout)
+
+        def forward(self, seq, mask):
+            seq_ = self.sa_layer_norm(seq)
+            seq_, _ = self.self_attention_layer(seq_, seq_, seq_, mask)
+            seq = seq + self.dropout(seq_)
+            
+            seq_ = self.ffn_layer_norm(seq)
+            seq_ = pointwise_feedforward_network(seq_)
+            seq = seq + self.dropout(seq_)
+            return seq
