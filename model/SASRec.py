@@ -60,6 +60,6 @@ class SelfAttentionLayer(nn.Module):
             seq = seq + self.dropout(seq_)
             
             seq_ = self.ffn_layer_norm(seq)
-            seq_ = pointwise_feedforward_network(seq_)
+            seq_ = self.pointwise_feedforward_network(seq_)
             seq = seq + self.dropout(seq_)
             return seq
