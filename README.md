@@ -5,7 +5,8 @@
 |2023-04-27|SelfAttentionLayer 클래스 구현|
 |2023-04-28|PointwiseFeedforwardNetwork 클래스 구현|
 |2023-04-29|SelfAttentionBlock 클래스 구현|
-
+|2023-04-30|PredictionLayer 클래스 구현|
+|2023-04-30|EmbeddingLayer 클래스 구현|
 
 # Reference
 * 논문 저자의 SASRec(ver TF) 구현체 코드 참고
