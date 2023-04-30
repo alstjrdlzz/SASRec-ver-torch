@@ -63,3 +63,18 @@ class SelfAttentionBlock(nn.Module):
         seq_ = self.pointwise_feedforward_network(seq_)
         seq = seq + self.dropout(seq_)
         return seq
+    
+
+class PredictionLayer(nn.Module):
+    def __init__(self, item_emb, device):
+        super().__init__()
+        self.item_emb = item_emb
+        self.device = device
+
+    def forward(self, seq, pos, neg):
+        seq_emb = seq
+        pos_emb = self.item_emb(pos).to(self.device)
+        neg_emb = self.item_emb(neg).to(self.device)
+        pos_logits = torch.sum((pos_emb * seq_emb), dim=-1)
+        neg_logits = torch.sum((neg_emb * seq_emb), dim=-1)
+        return pos_logits, neg_logits
