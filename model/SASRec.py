@@ -31,35 +31,35 @@ class SelfAttentionLayer(nn.Module):
         return x, attention
     
 
-    class PointwiseFeedforwardNetwork(nn.Module):
-        def __init__(self, hidden_dim, dropout):
-            super().__init__()
-            self.conv1 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
-            self.conv2 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
-            self.relu = nn.ReLU()
-            self.dropout = nn.Dropout(dropout)
-            
-        def forward(self, x):
-            x = self.dropout(self.relu(self.conv1(x)))
-            x = self.dropout(self.conv2(x))
-            return x
+class PointwiseFeedforwardNetwork(nn.Module):
+    def __init__(self, hidden_dim, dropout):
+        super().__init__()
+        self.conv1 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
+        self.conv2 = nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(dropout)
+        
+    def forward(self, x):
+        x = self.dropout(self.relu(self.conv1(x)))
+        x = self.dropout(self.conv2(x))
+        return x
         
     
-    class SelfAttentionBlock(nn.Module):
-        def __init__(self, hidden_dim, dropout, device):
-            super().__init__()
-            self.sa_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
-            self.ffn_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
-            self.self_attention_layer = SelfAttentionLayer(hidden_dim, dropout, device)
-            self.pointwise_feedforward_network = PointwiseFeedforwardNetwork(hidden_dim, dropout)
-            self.dropout = nn.Dropout(dropout)
+class SelfAttentionBlock(nn.Module):
+    def __init__(self, hidden_dim, dropout, device):
+        super().__init__()
+        self.sa_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
+        self.ffn_layer_norm = nn.LayerNorm(hidden_dim, 1e-8)
+        self.self_attention_layer = SelfAttentionLayer(hidden_dim, dropout, device)
+        self.pointwise_feedforward_network = PointwiseFeedforwardNetwork(hidden_dim, dropout)
+        self.dropout = nn.Dropout(dropout)
 
-        def forward(self, seq, mask):
-            seq_ = self.sa_layer_norm(seq)
-            seq_, _ = self.self_attention_layer(seq_, seq_, seq_, mask)
-            seq = seq + self.dropout(seq_)
-            
-            seq_ = self.ffn_layer_norm(seq)
-            seq_ = self.pointwise_feedforward_network(seq_)
-            seq = seq + self.dropout(seq_)
-            return seq
+    def forward(self, seq, mask):
+        seq_ = self.sa_layer_norm(seq)
+        seq_, _ = self.self_attention_layer(seq_, seq_, seq_, mask)
+        seq = seq + self.dropout(seq_)
+        
+        seq_ = self.ffn_layer_norm(seq)
+        seq_ = self.pointwise_feedforward_network(seq_)
+        seq = seq + self.dropout(seq_)
+        return seq
