@@ -5,7 +5,7 @@ import torch.nn as nn
 class EmbeddingLayer(nn.Module):
     def __init__(self, item_num, hidden_dim, max_len, dropout, device):
         super().__init__()
-
+        self.hidden_dim = hidden_dim
         self.device = device
         self.item_emb = nn.Embedding(item_num, hidden_dim)
         self.posi_emb = nn.Embedding(max_len, hidden_dim)
@@ -14,10 +14,12 @@ class EmbeddingLayer(nn.Module):
     def forward(self, seq, mask):
         batch_size = seq.shape[0]
         seq_len = seq.shape[1]
-
         position = torch.arange(0, seq_len).unsqueeze(0).repeat(batch_size, 1).to(self.device)
 
-        seq = self.dropout(self.item_emb(seq) + self.posi_emb(position))
+        seq = self.item_emb(seq)
+        seq *= self.hidden_dim ** 0.5
+
+        seq = self.dropout(seq + self.posi_emb(position))
         
         seq = seq.masked_fill(mask==0, 0)
         return seq
